@@ -1,0 +1,35 @@
+name: Inject Script to HTML Files
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  inject:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Add script to HTML files
+        run: |
+          python3 -c '
+          import os
+          for root, dirs, files in os.walk("."):
+              for file in files:
+                  if file.endswith(".html"):
+                      filepath = os.path.join(root, file)
+                      with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+                          content = f.read()
+                      if "app.js" not in content and "</body>" in content:
+                          content = content.replace("</body>", "    <script src=\"app.js\"></script>\n</body>")
+                          with open(filepath, "w", encoding="utf-8") as f:
+                              f.write(content)
+                          print(f"Updated: {file}")
+          '
+
+      - name: Commit and push if changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Automatically inject app.js into all HTML files"
+          branch: main
