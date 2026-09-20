@@ -22,27 +22,35 @@ $('previousWeek').onclick=()=>{weekStart.setDate(weekStart.getDate()-7);selected
 $('themeToggle').onclick=()=>{document.documentElement.classList.toggle('light');const light=document.documentElement.classList.contains('light');$('themeToggle').innerHTML=light?'☾ <span>DARK</span>':'☀ <span>LIGHT</span>';localStorage.setItem('mr-study-theme',light?'light':'dark')}; if(localStorage.getItem('mr-study-theme')==='light')$('themeToggle').click();
 if('serviceWorker'in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 
-// Automatically add profile and credit neatly at the bottom of all pages
+// Automatically add small profile badge at bottom-right without hiding content
 window.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('er-mohit-footer')) return;
+    const oldFooter = document.getElementById('er-mohit-footer');
+    if (oldFooter) oldFooter.remove();
 
-    const footerDiv = document.createElement('div');
-    footerDiv.id = 'er-mohit-footer';
+    if (document.getElementById('er-mohit-corner')) return;
+
+    const cornerDiv = document.createElement('div');
+    cornerDiv.id = 'er-mohit-corner';
     
-    footerDiv.style.cssText = `
+    cornerDiv.style.cssText = `
+        position: fixed;
+        bottom: 15px;
+        right: 15px;
+        z-index: 9999;
         text-align: center;
-        padding: 25px 15px;
-        margin-top: 40px;
-        background-color: #f9f9f9;
-        border-top: 1px solid #eaeaea;
-        width: 100%;
-        box-sizing: border-box;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(5px);
+        padding: 6px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        width: 75px;
+        pointer-events: auto;
     `;
 
-    footerDiv.innerHTML = `
-        <img src="mohit.png" alt="ER.Mohit" style="border-radius: 50%; width: 90px; height: 90px; object-fit: cover; border: 2px solid #333; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-        <h3 style="margin: 12px 0 0 0; color: #333; font-size: 18px; font-family: sans-serif;">Created by ER.Mohit</h3>
+    cornerDiv.innerHTML = `
+        <img src="mohit.png" alt="ER.Mohit" style="border-radius: 50%; width: 50px; height: 50px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); display: block; margin: 0 auto 3px auto;">
+        <span style="color: #333; font-size: 11px; font-family: sans-serif; font-weight: bold; display: block;">ER.Mohit</span>
     `;
 
-    document.body.appendChild(footerDiv);
+    document.body.appendChild(cornerDiv);
 });
