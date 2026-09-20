@@ -22,7 +22,7 @@ $('previousWeek').onclick=()=>{weekStart.setDate(weekStart.getDate()-7);selected
 $('themeToggle').onclick=()=>{document.documentElement.classList.toggle('light');const light=document.documentElement.classList.contains('light');$('themeToggle').innerHTML=light?'☾ <span>DARK</span>':'☀ <span>LIGHT</span>';localStorage.setItem('mr-study-theme',light?'light':'dark')}; if(localStorage.getItem('mr-study-theme')==='light')$('themeToggle').click();
 if('serviceWorker'in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 
-// Automatically add small profile badge at bottom-right without hiding content
+// Automatically add small profile badge at bottom-right using absolute URL
 window.addEventListener('DOMContentLoaded', () => {
     const oldFooter = document.getElementById('er-mohit-footer');
     if (oldFooter) oldFooter.remove();
@@ -48,7 +48,7 @@ window.addEventListener('DOMContentLoaded', () => {
     `;
 
     cornerDiv.innerHTML = `
-        <img src="mohit.png" alt="ER.Mohit" style="border-radius: 50%; width: 50px; height: 50px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); display: block; margin: 0 auto 3px auto;">
+        <img src="https://rajasthancet565456-ui.github.io/ER.MOHIT-ui.github.io/mohit.png" alt="ER.Mohit" style="border-radius: 50%; width: 50px; height: 50px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); display: block; margin: 0 auto 3px auto;">
         <span style="color: #333; font-size: 11px; font-family: sans-serif; font-weight: bold; display: block;">ER.Mohit</span>
     `;
 
