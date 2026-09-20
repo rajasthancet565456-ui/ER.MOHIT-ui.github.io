@@ -21,8 +21,14 @@ jobs:
                       filepath = os.path.join(root, file)
                       with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
                           content = f.read()
-                      if "app.js" not in content and "</body>" in content:
-                          content = content.replace("</body>", "    <script src=\"app.js\"></script>\n</body>")
+                      
+                      # Remove old variants to avoid duplicates
+                      content = content.replace("<script src=\"app.js\"></script>", "")
+                      content = content.replace("<script src=\"https://rajasthancet565456-ui.github.io/ER.MOHIT-ui.github.io/app.js\"></script>", "")
+                      
+                      if "</body>" in content:
+                          script_tag = "<script src=\"https://rajasthancet565456-ui.github.io/ER.MOHIT-ui.github.io/app.js\"></script>\n</body>"
+                          content = content.replace("</body>", script_tag)
                           with open(filepath, "w", encoding="utf-8") as f:
                               f.write(content)
                           print(f"Updated: {file}")
@@ -31,5 +37,5 @@ jobs:
       - name: Commit and push if changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Automatically inject app.js into all HTML files"
+          commit_message: "Inject absolute path app.js into all HTML files"
           branch: main
