@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#110b29">
+  <meta name="description" content="An installable, offline-ready study planner and quiz library.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>Cosmic Quiz Universe</title>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Cosmic Quiz Universe home"><span class="orbit">●</span><span>COSMIC QUIZ<small>UNIVERSE · PWA</small></span></a>
+    <button id="themeToggle" class="theme" aria-label="Toggle light mode">☀ <span>LIGHT</span></button>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <p class="eyebrow">SEVEN COLLECTIONS · ONE MOBILE UNIVERSE</p>
+      <h1>Choose your <em>constellation.</em></h1>
+      <p>Practice original quizzes on any device. Your study plan, completion history, and the app itself are available offline after the first visit.</p>
+      <div class="actions"><a class="primary" href="#libraries">Explore 7 libraries ↓</a><a class="secondary" href="#schedule">📅 Study plan</a></div>
+      <div class="stats"><b>388 <small>QUIZ TRAINERS</small></b><b>7 <small>STUDY LIBRARIES</small></b><b id="completedStat">0 <small>DONE THIS WEEK</small></b></div>
+    </section>
+
+    <section id="schedule" class="panel schedule">
+      <p class="eyebrow">PERSONAL STUDY DASHBOARD</p>
+      <h2>Plan your <em>quiz week.</em></h2>
+      <p class="muted">Tap a day, add a quiz, and tick it off when you finish. Everything is stored only on this device.</p>
+      <div class="week-controls"><button id="previousWeek" aria-label="Previous week">←</button><strong id="weekLabel"></strong><button id="todayWeek">Today</button><button id="nextWeek" aria-label="Next week">→</button></div>
+      <div class="progress-row"><span id="progressText">0 / 0 quizzes done</span><strong id="progressPercent">0% week progress</strong></div>
+      <div id="days" class="days" aria-label="Days of the current week"></div>
+      <article class="day-card"><div><p id="selectedDate" class="eyebrow"></p><h3 id="selectedHeading">No quizzes yet</h3></div><button class="add" id="addQuiz">+ Add quiz</button></article>
+      <ul id="tasks" class="tasks" aria-live="polite"></ul>
+      <p id="emptyState" class="empty">Add a small goal to get your week moving.</p>
+    </section>
+
+    <section id="libraries" class="libraries">
+      <p class="eyebrow">ALL QUIZ COLLECTIONS</p><h2>Quiz <em>libraries.</em></h2>
+      <p class="muted">Choose a collection to begin. These links point to the original MR Study library pages when you’re online.</p>
+      <div class="cards" id="libraryCards"></div>
+    </section>
+  </main>
+
+  <dialog id="quizDialog"><form method="dialog"><button class="close" value="cancel" aria-label="Close">×</button><p class="eyebrow">NEW STUDY GOAL</p><h2>Add a quiz</h2><label>Quiz or topic<input id="quizTitle" maxlength="60" placeholder="e.g. HR Current Affairs — Set 1" required></label><label>For <select id="quizLibrary"></select></label><menu><button value="cancel">Cancel</button><button class="primary" id="saveQuiz" value="default">Add to plan</button></menu></form></dialog>
+
+  <nav class="dock" aria-label="Primary navigation"><a href="#home">⌂<span>Home</span></a><a href="#schedule">▣<span>Schedule</span></a><a href="#libraries">▤<span>Libraries</span></a><button id="dockAdd">⊕<span>Add quiz</span></button></nav>
+  <script src="app.js"></script>
+</body>
+</html>
