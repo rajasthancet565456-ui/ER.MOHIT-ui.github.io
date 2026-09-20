@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.rajasthancet565456_ui.twa",
+      "sha256_cert_fingerprints": [
+        "C6:9B:2A:22:38:3D:D3:09:47:27:7C:AB:B4:24:E1:56:AC:5E:CA:9A:45:45:72:4B:D0:47:AB:93:5D:32:03:4C"
+      ]
+    }
+  }
+]
