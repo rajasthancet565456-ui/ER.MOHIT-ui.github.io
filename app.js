@@ -21,3 +21,28 @@ $('addQuiz').onclick=openDialog; $('dockAdd').onclick=openDialog; $('saveQuiz').
 $('previousWeek').onclick=()=>{weekStart.setDate(weekStart.getDate()-7);selected=new Date(weekStart);render()}; $('nextWeek').onclick=()=>{weekStart.setDate(weekStart.getDate()+7);selected=new Date(weekStart);render()}; $('todayWeek').onclick=()=>{weekStart=startOfWeek(new Date());selected=new Date();render()};
 $('themeToggle').onclick=()=>{document.documentElement.classList.toggle('light');const light=document.documentElement.classList.contains('light');$('themeToggle').innerHTML=light?'☾ <span>DARK</span>':'☀ <span>LIGHT</span>';localStorage.setItem('mr-study-theme',light?'light':'dark')}; if(localStorage.getItem('mr-study-theme')==='light')$('themeToggle').click();
 if('serviceWorker'in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
+
+// Automatically add profile and credit neatly at the bottom of all pages
+window.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('er-mohit-footer')) return;
+
+    const footerDiv = document.createElement('div');
+    footerDiv.id = 'er-mohit-footer';
+    
+    footerDiv.style.cssText = `
+        text-align: center;
+        padding: 25px 15px;
+        margin-top: 40px;
+        background-color: #f9f9f9;
+        border-top: 1px solid #eaeaea;
+        width: 100%;
+        box-sizing: border-box;
+    `;
+
+    footerDiv.innerHTML = `
+        <img src="mohit.png" alt="ER.Mohit" style="border-radius: 50%; width: 90px; height: 90px; object-fit: cover; border: 2px solid #333; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <h3 style="margin: 12px 0 0 0; color: #333; font-size: 18px; font-family: sans-serif;">Created by ER.Mohit</h3>
+    `;
+
+    document.body.appendChild(footerDiv);
+});
