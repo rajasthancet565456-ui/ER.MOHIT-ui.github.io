@@ -7,10 +7,68 @@ const libraries = [
   ['Computer Studies','Computer','Fundamentals, networking, office tools, and hardware practice.','computer-quiz-hub.html'],
   ['English Vocabulary','Vocab Energy','Blackbook vocabulary mastery missions, synonyms, and idioms.','english-vocab-quiz-hub.html']
 ];
+
+// ── Mark / Unmark state (localStorage) ──────────────────────────────────
+const markKey = 'mr-study-pwa-library-marks';
+function getMarks() {
+  try { return JSON.parse(localStorage.getItem(markKey)) || {}; }
+  catch { return {}; }
+}
+function saveMarks(marks) { localStorage.setItem(markKey, JSON.stringify(marks)); }
+function toggleLibraryMark(libTitle, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const marks = getMarks();
+  if (marks[libTitle]) { delete marks[libTitle]; }
+  else { marks[libTitle] = true; }
+  saveMarks(marks);
+  renderLibraries();
+}
+
 const key='mr-study-pwa-goals'; let selected=new Date(); let weekStart=startOfWeek(new Date());
 const $=id=>document.getElementById(id); const goals=()=>JSON.parse(localStorage.getItem(key)||'[]'); const save=v=>localStorage.setItem(key,JSON.stringify(v));
 function startOfWeek(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x} function iso(d){return d.toISOString().slice(0,10)} function format(d,o){return new Intl.DateTimeFormat('en-IN',o).format(d)}
-function renderLibraries(){ $('libraryCards').innerHTML=libraries.map(([tag,title,description,href])=>`<a class="card" href="https://rajasthancet565456-ui.github.io/MR-STUDY/${href}#library"><span class="tag">${tag.toUpperCase()}</span><h3>${title}</h3><p>${description}</p><b>OPEN LIBRARY →</b></a>`).join(''); $('quizLibrary').innerHTML=libraries.map((x,i)=>`<option value="${x[1]}">${x[1]}</option>`).join('') }
+
+function renderLibraries(){
+  const marks = getMarks();
+  const totalLibs = libraries.length;
+  const markedCount = libraries.filter(([,title]) => marks[title]).length;
+  const unmarkedCount = totalLibs - markedCount;
+
+  // Build summary + filter bar
+  let summaryHTML = `
+    <div style="margin-bottom:16px;padding:14px 16px;border:1px solid rgba(118,84,204,0.22);border-radius:14px;background:rgba(255,255,255,0.06);backdrop-filter:blur(6px);">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:600;opacity:0.9;">
+        <span>Library Progress</span>
+        <strong style="color:#7654cc;">${markedCount} of ${totalLibs} Attempted (${totalLibs?Math.round(markedCount/totalLibs*100):0}%)</strong>
+      </div>
+      <div style="height:6px;margin-top:8px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,0.12);">
+        <div style="height:100%;border-radius:inherit;background:linear-gradient(90deg,#7654cc,#38a169);width:${totalLibs?Math.round(markedCount/totalLibs*100):0}%;transition:width 0.3s;"></div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:11px;font-weight:600;opacity:0.7;">
+        <span>🟣 ${totalLibs} Total</span>
+        <span>✅ ${markedCount} Attempted</span>
+        <span>❌ ${unmarkedCount} Not Attempted</span>
+      </div>
+    </div>
+  `;
+
+  // Build library cards with mark/unmark
+  const cardsHTML = libraries.map(([tag, title, description, href]) => {
+    const isMarked = marks[title];
+    return `<a class="card${isMarked ? ' is-marked' : ''}" href="https://rajasthancet565456-ui.github.io/MR-STUDY/${href}#library" style="position:relative;${isMarked ? 'border-color:#38a169;box-shadow:0 0 0 1.5px #38a169,0 4px 14px rgba(56,161,105,0.15);' : ''}">
+      <span class="tag">${tag.toUpperCase()}</span>
+      <span style="position:absolute;top:10px;right:10px;font-size:16px;">${isMarked ? '✅' : '☐'}</span>
+      <h3>${title}</h3>
+      <p>${description}</p>
+      <b>OPEN LIBRARY →</b>
+      <button type="button" onclick="toggleLibraryMark('${title}', event)" style="display:flex;align-items:center;justify-content:center;gap:5px;width:100%;margin-top:8px;padding:8px;border:1.5px solid ${isMarked ? '#38a169' : 'rgba(118,84,204,0.25)'};border-radius:8px;background:${isMarked ? 'rgba(56,161,105,0.15)' : 'rgba(255,255,255,0.05)'};color:${isMarked ? '#38a169' : 'inherit'};font-size:11px;font-weight:700;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;font-family:inherit;text-decoration:none;">${isMarked ? '✅ Attempted — Click to Unmark' : '☐ Not Attempted — Click to Mark'}</button>
+    </a>`;
+  }).join('');
+
+  $('libraryCards').innerHTML = summaryHTML + cardsHTML;
+  $('quizLibrary').innerHTML = libraries.map((x,i)=>`<option value="${x[1]}">${x[1]}</option>`).join('');
+}
+
 function render(){const all=goals(), days=[...Array(7)].map((_,i)=>{const d=new Date(weekStart);d.setDate(d.getDate()+i);return d}); $('weekLabel').textContent=`${format(days[0],{day:'numeric',month:'short'})} — ${format(days[6],{day:'numeric',month:'short',year:'numeric'})}`; const inWeek=all.filter(g=>days.some(d=>iso(d)===g.date)), done=inWeek.filter(g=>g.done).length; $('progressText').textContent=`${done} / ${inWeek.length} quizzes done`; $('progressPercent').textContent=`${inWeek.length?Math.round(done/inWeek.length*100):0}% week progress`; $('completedStat').innerHTML=`${done} <small>DONE THIS WEEK</small>`; $('days').innerHTML=days.map(d=>{const items=all.filter(g=>g.date===iso(d));return `<button class="day ${iso(d)===iso(selected)?'active':''}" data-day="${iso(d)}"><span>${format(d,{weekday:'short'}).toUpperCase()}</span><small>${d.getDate()}</small><i>${items.length}</i></button>`}).join(''); const items=all.filter(g=>g.date===iso(selected)); $('selectedDate').textContent=format(selected,{weekday:'long',day:'numeric',month:'long'}); $('selectedHeading').textContent=items.length?`${items.length} quiz${items.length>1?'zes':''} scheduled`:'No quizzes yet'; $('tasks').innerHTML=items.map(g=>`<li><input data-check="${g.id}" type="checkbox" ${g.done?'checked':''} aria-label="Mark ${g.title} complete"><label class="${g.done?'done':''}">${g.title} <small>· ${g.library}</small></label><button class="remove" data-remove="${g.id}" aria-label="Remove ${g.title}">×</button></li>`).join(''); $('emptyState').hidden=items.length>0 }
 function openDialog(){ $('quizTitle').value=''; $('quizDialog').showModal(); $('quizTitle').focus() }
 renderLibraries(); render();
